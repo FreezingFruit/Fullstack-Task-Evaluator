@@ -1,6 +1,6 @@
 import express from "express";
-import Task from "../models/Task";
-import { authenticateToken } from "../middleware/auth";
+import Task from "../models/Task.js";
+import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -49,7 +49,7 @@ router.put("/:id", async (req, res) => {
       { new: true }
     );
 
-    if (!task) {
+    if (!updateTask) {
       return res.status(404).json({ error: "Task not found!" });
     }
 
@@ -66,7 +66,7 @@ router.delete("/:id", async (req, res) => {
       userId: req.userId,
     });
 
-    if (!task) {
+    if (!deleteTask) {
       return res.status(404).json({ error: "Task not found" });
     }
 
