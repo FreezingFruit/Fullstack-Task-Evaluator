@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import authRoutes from "./routes/auth.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 //API ROUTES
-//TODO
+app.use("/api/auth", authRoutes);
 
 //API HEALTH CHECK
 
