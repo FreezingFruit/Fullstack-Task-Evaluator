@@ -23,14 +23,25 @@ const router = createRouter({
       name: 'Tasks',
       component: () => import('@/views/TaskView.vue'),
     },
+    // 404 Page - Catch all route (MUST be last)
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('@/views/NotFoundView.vue'),
+    },
   ],
 })
 
-// Route protection - redirect if not authenticated
+// Route protection - but exclude 404 page
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const publicPages = ['/login', '/register']
   const authRequired = !publicPages.includes(to.path)
+
+  // Don't protect 404 page
+  if (to.name === 'NotFound') {
+    return next()
+  }
 
   if (authRequired && !authStore.isAuthenticated) {
     next('/login')
