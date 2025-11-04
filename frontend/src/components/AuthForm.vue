@@ -7,8 +7,14 @@
         </h2>
       </div>
 
-      <el-form :model="form" @submit.prevent="handleSubmit" class="mt-8 space-y-6">
-        <div>
+      <el-form
+        ref="formRef"
+        :rules="rules"
+        :model="form"
+        @submit.prevent="handleSubmit"
+        class="mt-8 space-y-6"
+      >
+        <el-form-item prop="email">
           <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
             Email address
           </label>
@@ -19,9 +25,9 @@
             required
             class="w-full"
           />
-        </div>
+        </el-form-item>
 
-        <div>
+        <el-form-item prop="password">
           <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
             Password
           </label>
@@ -33,7 +39,7 @@
             class="w-full"
             show-password
           />
-        </div>
+        </el-form-item>
 
         <div class="flex flex-col space-y-4">
           <el-button native-type="submit" type="primary" class="w-full py-3">
@@ -60,7 +66,8 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/AuthStore'
 import { useRouter } from 'vue-router'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
 
 const props = defineProps<{ mode: 'login' | 'register' }>()
 const router = useRouter()
@@ -69,6 +76,19 @@ const authStore = useAuthStore()
 const form = reactive({
   email: '',
   password: '',
+})
+
+//FORM VALIDATION FOR EMAIL AND PASSWORD
+const formRef = ref<FormInstance>()
+const rules = reactive<FormRules>({
+  email: [
+    { required: true, message: 'Please enter email', trigger: 'blur' },
+    { type: 'email', message: 'Please enter a valid email', trigger: 'blur' },
+  ],
+  password: [
+    { required: true, message: 'Please enter password', trigger: 'blur' },
+    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' },
+  ],
 })
 
 const switchMode = () => {
@@ -80,6 +100,11 @@ const switchMode = () => {
 }
 
 const handleSubmit = async () => {
+  //FORM RULES CHECK
+  if (!formRef.value) return
+  const isValid = await formRef.value.validate()
+  if (!isValid) return
+
   try {
     if (props.mode === 'login') {
       await authStore.login(form)
