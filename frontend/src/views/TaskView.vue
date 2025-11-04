@@ -1,7 +1,11 @@
 <template>
-  <div></div>
+  <div>
+    <TaskList />
+  </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TaskList from '@/components/TaskList.vue'
+</script>
 
 <style scoped></style>
